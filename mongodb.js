@@ -1,43 +1,51 @@
-const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient;
+// const mongodb = require('mongodb');
+// const MongoClient = mongodb.MongoClient;
+// const ObjectID = mongodb.ObjectID;
+
+// destructured object version of above code.
+const {MongoClient, ObjectID}= require('mongodb');
 
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
+
+// const id = new ObjectID();
+// console.log(id);
+// console.log(id.getTimestamp());
 
 MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) => {
     if (error) {return console.log("'Unable to connecto to database")};
 
     const db = client.db(databaseName);
+    
+// chained update call and promise resolution.
+//    db.collection('users').updateOne({_id: new ObjectID("61bb77625dd95e3580b66f28")},{
+//         $set: {
+//             name:'Susanne'
+//         }
+//     }).then((result) => {
+//         console.log(result);
+//     }).catch((error) => {
+//         console.log(error);
+//     });
 
-    // db.collection('users').insertOne({
-    //     name: 'Kristan',
-    //     age: '39'
-    // }, (error, result) => {
-    //     if (error) {return console.log('Unable to insert user')};
-    //     console.log(result.ops);
+    // db.collection('users').updateOne({_id: new ObjectID("61bb77625dd95e3580b66f28")},{
+    //     $inc: {
+    //         age: 1
+    //     }
+    // }).then((result) => {
+    //     console.log(result);
+    // }).catch((error) => {
+    //     console.log(error);
     // });
 
-    // db.collection('users').insertMany([
-    //     {name: 'Jen',
-    //      age: 28},
-    //     {name: 'Gunter', 
-    //       age: 42}
-    // ], (error, results) => {
-    //     if (error){ return console.log("Unable to insert information")};
-    //     console.log(results.ops);
-    // });
-
-    db.collection('tasks').insertMany([{
-        description: 'Do laundry',
-        completed: false
-    }, {
-        description: 'Wash dishes',
-        completed: true
-    }, {
-        description: 'Put away dishes',
-        completed: false
-    }], (error, results) => {
-        if(error) {return console.log('Unable to add information.')}
-        console.log(results.ops);
+    db.collection('tasks').updateMany({completed: false}, {
+        $set: {
+            completed: true
+        }
+    }).then((result) => {
+        console.log(result.modifiedCount);
+    }).catch((error) => {
+        console.log(error);
     });
+
 });
